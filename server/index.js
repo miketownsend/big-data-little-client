@@ -10,7 +10,6 @@ const app = express()
 const data = require("./data")
 
 app.use(cors())
-app.use(compression())
 
 app.get("/data", (req, res) => {
   res.send(data)

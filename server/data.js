@@ -39,7 +39,6 @@ for (let i = 0; i < 25000; i++) {
       faker.date.between(parse("3021-01-01"), parse("3120-01-01")),
       "YYYY-MM-DD"
     ),
-    age: faker.random.number({ min: 15, max: 100 }),
     class: faker.random.arrayElement(classes),
     race: faker.random.arrayElement(races),
     level: faker.random.number({ min: 1, max: 20 }),
