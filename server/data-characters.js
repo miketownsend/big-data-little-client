@@ -120,7 +120,7 @@ for (let i = 0; i < 25000; i++) {
     name: faker.name.findName(),
     motto: faker.lorem.sentence(),
     lair_location: `${faker.address.streetAddress()}, ${faker.address.city()}, ${faker.address.zipCode()}`,
-    lair_secret_password: faker.hacker.verb() + " " + faker.hacker.verb(),
+    lair_secret_password: faker.hacker.verb() + " " + faker.hacker.noun(),
     classname: faker.random.arrayElement(classes),
     race: faker.random.arrayElement(races),
     level: faker.random.number({ min: 1, max: 20 }),
