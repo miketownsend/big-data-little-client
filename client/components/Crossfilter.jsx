@@ -5,11 +5,7 @@ import numeral from "numeral"
 import ClassTable from "./ClassTable"
 import CharactersTable from "./CharactersTable"
 import Loading from "./Loading"
-
-const Reporter = ({ start }) => {
-  console.log("Rendered tables in", Date.now() - start)
-  return null
-}
+import Reporter from "./Reporter"
 
 const setupCrossfilter = (data = []) => {
   const crossfilter = Crossfilter(data)
@@ -77,10 +73,11 @@ const CrossfilterView = ({ data }) => {
 
   const start = Date.now()
   const [cx, setCx] = useState(null)
+
   useEffect(() => {
     const start = Date.now()
     setCx(setupCrossfilter(data))
-    console.log("Updating crossfilter", Date.now() - start)
+    console.log("Setting up crossfilter", Date.now() - start)
   }, ["data"])
 
   if (!cx) return <Loading />

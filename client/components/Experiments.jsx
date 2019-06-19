@@ -24,8 +24,22 @@ export default () => {
   const [experiments, setExperiments] = useState(loadAll())
   const [currentExperiment, setCurrentExperiment] = useState(null)
 
+  const onKeyPress = event => {
+    if (event.key === "Tab") {
+      toggleShowExperiments()
+    }
+
+    if (event.key === "Enter") {
+      onRunExperiment()
+    }
+  }
+
   useEffect(() => {
     onRunExperiment()
+    document.addEventListener("keydown", onKeyPress)
+    return () => {
+      document.removeEventListener("keydown", onKeyPress)
+    }
   }, [])
 
   const onComplete = (experiment, data) => {
@@ -54,6 +68,10 @@ export default () => {
 
   const onUpdateTitle = (id, title) => {
     setExperiments(saveOne({ ...experiments[id], title }))
+  }
+
+  const toggleShowExperiments = () => {
+    setShowExperiments(prev => !prev)
   }
 
   const calculateTotal = ex =>
@@ -137,11 +155,7 @@ export default () => {
       <main>
         <Crossfilter data={data} />
       </main>
-      <a
-        className="showExperiments"
-        href="#"
-        onClick={() => setShowExperiments(!showExperiments)}
-      >
+      <a className="showExperiments" href="#" onClick={toggleShowExperiments}>
         {showExperiments ? "Hide" : "Experiments"}
       </a>
     </React.Fragment>
