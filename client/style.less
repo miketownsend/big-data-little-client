@@ -1,6 +1,20 @@
 body {
   font-family: arial;
   font-size: 14px;
+  margin: 0px;
+
+  background: url("http://localhost:3003/images/Town.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  height: 100vh;
+  width: 100vw;
+}
+
+#root {
+  height: 100vh;
+  width: 100vw;
+  overflow-y: scroll;
 }
 
 button,
@@ -48,20 +62,43 @@ input {
 
 button {
   cursor: pointer;
+  text-decoration: underline;
 }
 
-aside,
 main {
-  box-sizing: border-box;
+  width: 900px;
+  margin: auto;
+  padding: 20px 50px;
+  background-color: rgba(255, 255, 255, 0.95);
+}
+
+aside {
+  position: fixed;
+  height: 100%;
   width: 50%;
-  float: left;
-  padding: 0 10px;
+  left: 0;
+  padding: 20px;
+  background-color: #f0f0f0;
+  border-right: 1px solid #999;
+  box-shadow: 5px 0px 5px rgba(200, 200, 200, 0.5);
+  transition: left 0.5s ease-in-out;
+
+  z-index: 1;
+
+  &.hidden {
+    left: -100%;
+  }
 }
 
-article {
+h1 {
+  padding: 10px;
 }
 
-.benchmark {
+.showExperiments {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 10;
 }
 
 .benchmark--header {
@@ -165,9 +202,11 @@ img {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
+  align-items: center;
 
   width: 200px;
   margin: 80px auto;
+  padding-bottom: 100vh;
 
   img {
     flex: 0 0 40px;

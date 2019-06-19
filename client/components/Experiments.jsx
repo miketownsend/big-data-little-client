@@ -4,16 +4,29 @@ import { reduce } from "lodash/fp"
 import Benchmark from "./Benchmark"
 import Crossfilter from "./Crossfilter"
 
-import { run, loadAll, saveOne, clearOne, clearAll, startStep, stopStep } from "../services/experiment"
+import {
+  run,
+  loadAll,
+  saveOne,
+  clearOne,
+  clearAll,
+  startStep,
+  stopStep
+} from "../services/experiment"
 
 export default () => {
   const [data, setData] = useState(null)
+  const [showExperiments, setShowExperiments] = useState(false)
   const [showRequest, setShowRequest] = useState(false)
   const [showParse, setShowParse] = useState(false)
   const [showTransform, setShowTransform] = useState(true)
-  const [currentExperiment, setCurrentExperiment] = useState(null)
   const [lastExperiment, setLastExperiment] = useState(null)
   const [experiments, setExperiments] = useState(loadAll())
+  const [currentExperiment, setCurrentExperiment] = useState(null)
+
+  useEffect(() => {
+    onRunExperiment()
+  }, [])
 
   const onComplete = (experiment, data) => {
     const experiments = saveOne({ ...experiment })
@@ -25,10 +38,7 @@ export default () => {
 
   const onRunExperiment = () => {
     setData(null)
-    run(
-      setCurrentExperiment,
-      onComplete
-    )
+    run(setCurrentExperiment, onComplete)
   }
 
   const onClearExperiments = () => {
@@ -57,13 +67,9 @@ export default () => {
     return total > max ? total : max
   }, 0)([...Object.values(experiments), currentExperiment])
 
-  useEffect(() => {
-    onRunExperiment()
-  }, [])
-
   return (
     <React.Fragment>
-      <aside>
+      <aside className={showExperiments ? "" : "hidden"}>
         <header className={"header"}>
           <button onClick={onRunExperiment}>Run</button>
           <button onClick={onClearExperiments}>Clear</button>
@@ -79,7 +85,7 @@ export default () => {
           >
             Parse
           </button>
-          
+
           <button
             className={`toggle transform ${showTransform && "active"}`}
             onClick={() => setShowTransform(!showTransform)}
@@ -88,13 +94,13 @@ export default () => {
           </button>
         </header>
         <article className="benchmark benchmark--header">
-            <header>
-              <label>Name</label>
-              { showRequest && <label>Fetch</label> }
-              { showParse && <label>Parse</label> }
-              { showTransform && <label>Transform</label> }
-              <label>Total</label>
-              <label/>
+          <header>
+            <label>Name</label>
+            {showRequest && <label>Fetch</label>}
+            {showParse && <label>Parse</label>}
+            {showTransform && <label>Transform</label>}
+            <label>Total</label>
+            <label />
           </header>
         </article>
         {currentExperiment && (
@@ -128,7 +134,16 @@ export default () => {
               )
             })}
       </aside>
-      <Crossfilter data={data} />
+      <main>
+        <Crossfilter data={data} />
+      </main>
+      <a
+        className="showExperiments"
+        href="#"
+        onClick={() => setShowExperiments(!showExperiments)}
+      >
+        {showExperiments ? "Hide" : "Experiments"}
+      </a>
     </React.Fragment>
   )
 }

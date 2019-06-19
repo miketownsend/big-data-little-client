@@ -72,32 +72,25 @@ const processCrossfilter = ({ groupRace, groupClass }) => {
   }
 }
 
-export default ({ data }) => {
-  if (!data)
-    return (
-      <main>
-        <Loading />
-      </main>
-    )
+const CrossfilterView = ({ data }) => {
+  if (!data) return <Loading />
 
   const start = Date.now()
   const [cx, setCx] = useState(null)
-
   useEffect(() => {
     const start = Date.now()
     setCx(setupCrossfilter(data))
     console.log("Updating crossfilter", Date.now() - start)
   }, ["data"])
 
-  if (!cx) {
-    return null
-  }
+  if (!cx) return <Loading />
 
   const classStats = cx.groupClass.all()
   const filteredCharacters = cx.dimCharacter.top(1000)
 
   return (
-    <main>
+    <React.Fragment>
+      <h1>DnD Candidates</h1>
       <ClassTable
         classStats={classStats}
         onClick={classname => {
@@ -107,6 +100,8 @@ export default ({ data }) => {
       />
       <CharactersTable characters={filteredCharacters} />
       <Reporter start={start} />
-    </main>
+    </React.Fragment>
   )
 }
+
+export default CrossfilterView
