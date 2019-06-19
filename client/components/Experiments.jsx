@@ -1,29 +1,33 @@
-import React, { useState } from "react"
+import React, { useState, useEffect, memo } from "react"
 import uuid from "uuid"
 import { reduce } from "lodash/fp"
 import Benchmark from "./Benchmark"
+import Crossfilter from "./Crossfilter"
 
-import { run, loadAll, saveOne, clearOne, clearAll } from "../services/experiment"
+import { run, loadAll, saveOne, clearOne, clearAll, startStep, stopStep } from "../services/experiment"
 
-export default props => {
+export default () => {
+  const [data, setData] = useState(null)
   const [showRequest, setShowRequest] = useState(false)
   const [showParse, setShowParse] = useState(false)
   const [showTransform, setShowTransform] = useState(true)
   const [currentExperiment, setCurrentExperiment] = useState(null)
+  const [lastExperiment, setLastExperiment] = useState(null)
   const [experiments, setExperiments] = useState(loadAll())
 
-  const onCompleteExperiment = experiment => {
-    const experiments = saveOne(experiment)
+  const onComplete = (experiment, data) => {
+    const experiments = saveOne({ ...experiment })
     setCurrentExperiment(null)
+    setLastExperiment(experiment)
+    setData(data)
     setExperiments(experiments)
   }
 
   const onRunExperiment = () => {
+    setData(null)
     run(
-      experiment => {
-        setCurrentExperiment({ ...experiment })
-      },
-      experiment => onCompleteExperiment({ ...experiment })
+      setCurrentExperiment,
+      onComplete
     )
   }
 
@@ -53,7 +57,12 @@ export default props => {
     return total > max ? total : max
   }, 0)([...Object.values(experiments), currentExperiment])
 
+  useEffect(() => {
+    onRunExperiment()
+  }, [])
+
   return (
+    <React.Fragment>
       <aside>
         <header className={"header"}>
           <button onClick={onRunExperiment}>Run</button>
@@ -119,5 +128,7 @@ export default props => {
               )
             })}
       </aside>
+      <Crossfilter data={data} />
+    </React.Fragment>
   )
 }

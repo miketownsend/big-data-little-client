@@ -1,5 +1,4 @@
 body {
-  background-color: #f7f2f3;
   font-family: arial;
   font-size: 14px;
 }
@@ -63,7 +62,6 @@ article {
 }
 
 .benchmark {
-  
 }
 
 .benchmark--header {
@@ -126,4 +124,65 @@ article header {
 
 .benchmark__progress--transform {
   background-color: blue;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+}
+
+td,
+th {
+  text-align: left;
+  padding: 4px 8px;
+  vertical-align: center;
+}
+
+.number {
+  text-align: right;
+}
+
+img {
+  height: 40px;
+  width: 40px;
+  border: 2px solid #bbb;
+}
+
+@keyframes flickerAnimation {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.loading {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+
+  width: 200px;
+  margin: 80px auto;
+
+  img {
+    flex: 0 0 40px;
+    opacity: 1;
+    animation: flickerAnimation 2s infinite;
+    margin: 10px;
+  }
+
+  img:nth-child(2) {
+    opacity: 1;
+    animation: flickerAnimation 0.75s infinite;
+  }
+
+  img:nth-child(3) {
+    opacity: 1;
+    animation: flickerAnimation 0.5s infinite;
+  }
 }

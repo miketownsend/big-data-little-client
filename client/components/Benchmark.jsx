@@ -14,7 +14,6 @@ export default ({
   onUpdateTitle,
   max = 10000
 }) => {
-  // const showTotal = showRequest * 1 + showParse * 1 + showTransform * 1 > 1
   return (
     <article className="benchmark">
       <header>

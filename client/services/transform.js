@@ -1,16 +1,17 @@
-import { pick } from "lodash/fp"
+import { omit } from "lodash/fp"
 import moment from "moment"
-import { format, parse, differenceInYears } from "date-fns"
 
-const now = "3300-05-03"
-const picker = pick(["name", "class", "race"])
+const convertHeight = (height) => {
+  const [feet, inches] = height.split("'")
+  return (parseInt(feet) * 12 + parseInt(inches)) * 0.0254
+}
+
 const transform = character => {
-  const dob = parse(character.dob)
-
   return {
-    dob: format(dob, 'Do MMM YYYY'),
-    age: differenceInYears(dob, now),
-    ...picker(character)
+    dob: moment(character.dob).format('Do MMM YYYY'),
+    age: moment(character.dob).diff(new Date(), 'years'),
+    height: convertHeight(character.height),
+    ...omit(['laid_address', 'laid_location'])(character)
   }
 }
 

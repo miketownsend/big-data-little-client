@@ -1,5 +1,7 @@
 import React from "react"
 import ReactDOM from "react-dom"
-import App from "./components/App"
+import Experiments from "./components/Experiments"
 
-ReactDOM.render(<App />, document.getElementById("root"))
+console.log()
+
+ReactDOM.render(<Experiments />, document.getElementById("root"))

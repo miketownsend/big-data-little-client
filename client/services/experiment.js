@@ -3,31 +3,35 @@ import uuid from "uuid"
 
 import transform from "./transform"
 
-const runTransforms = (data, reporter) => {
-  const promise = new Promise((resolve, reject) => {
-    function runTransformsBatch(index) {
-      try {
-        const start = Date.now()
-        for (var i = index; i < Math.min(data.length, index + 1000); i++) {
-          transform(data[i])
-        }
+const runTransforms = (data) => new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve(data.map(transform))
+  }, 0)
+})
 
-        reporter(Date.now() - start)
+export const copyPublicFields = ({ id, title, request, parse, transform, render }) => {
+  return {
+    id,
+    title,
+    request,
+    parse,
+    transform,
+    render
+  }
+}
 
-        if (i < data.length) {
-          setTimeout(() => runTransformsBatch(i), 0)
-        } else {
-          resolve()
-        }
-      } catch (e) {
-        reject(e)
-      }
-    }
+export const startStep = (ex, stepName, onIterate) => {
+  ex.stepStart = Date.now()
+}
 
-    runTransformsBatch(0)
-  })
-
-  return promise
+export const stopStep = (ex, stepName, onIterate) => {
+  clearInterval(ex.interval)
+  ex[stepName] = Date.now() - ex.stepStart
+  delete ex.stepStart
+  onIterate(copyPublicFields(ex))
+  if (stepName === 'render') {
+    ex.renderCount++
+  }
 }
 
 export const run = (onIterate, onComplete) => {
@@ -39,52 +43,27 @@ export const run = (onIterate, onComplete) => {
     parse: 0,
     transform: 0
   }
-
-  let startRequest = Date.now()
-  const reportRequest = () => {
-    experiment.request = Date.now() - startRequest
-    onIterate({ ...experiment })
-  }
-  const requestInterval = setInterval(reportRequest, 50)
-
-  let startParse, parseInterval
-  const reportParse = () => {
-    experiment.parse = Date.now() - startParse
-    onIterate({ ...experiment })
-  }
-
-  const reportTransform = duration => {
-    experiment.transform += duration
-    onIterate({ ...experiment })
-  }
-
-  fetch("http://localhost:3003/data", {
+  
+  startStep(experiment, 'request', onIterate)
+  return fetch("http://localhost:3003/data", {
     headers: {
       cache: "no-store"
     }
   })
-    .then(
-      tap(() => {
-        clearInterval(requestInterval)
-        reportRequest()
-      })
-    )
+    .then(tap(() => stopStep(experiment, 'request', onIterate)))
     .then(res => {
-      startParse = Date.now()
-      parseInterval = setInterval(reportParse, 50)
+      startStep(experiment, 'parse', onIterate)
       return res.json()
     })
-    .then(
-      tap(() => {
-        clearInterval(parseInterval)
-        reportParse()
-      })
-    )
-    .then(data => runTransforms(data, reportTransform))
-    .then(() => onComplete({ ...experiment }))
+    .then(tap(() => stopStep(experiment, 'parse', onIterate)))
+    .then(data => {
+      startStep(experiment, 'transform', onIterate)
+      return runTransforms(data)
+    })
+    .then(tap(() => stopStep(experiment, 'transform', onIterate)))
+    .then((data) => onComplete(experiment, data))
     .catch(e => {
-      if (requestInterval) clearInterval(requestInterval)
-      if (parseInterval) clearInterval(parseInterval)
+      if(experiment.interval) clearInterval(experiment.interval)
       console.error(e)
     })
 }
