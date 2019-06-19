@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo } from "react"
+import React, { useState, useEffect } from "react"
 import uuid from "uuid"
 import { reduce } from "lodash/fp"
 import Benchmark from "./Benchmark"
@@ -16,7 +16,7 @@ import {
 
 export default () => {
   const [data, setData] = useState(null)
-  const [showExperiments, setShowExperiments] = useState(false)
+  const [showExperiments, setShowExperiments] = useState(true)
   const [showRequest, setShowRequest] = useState(false)
   const [showParse, setShowParse] = useState(false)
   const [showTransform, setShowTransform] = useState(true)

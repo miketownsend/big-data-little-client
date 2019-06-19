@@ -3,13 +3,21 @@ import uuid from "uuid"
 
 import transform from "./transform"
 
-const runTransforms = (data) => new Promise((resolve, reject) => {
-  setTimeout(() => {
-    resolve(data.map(transform))
-  }, 0)
-})
+const runTransforms = data =>
+  new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(data.map(transform))
+    }, 0)
+  })
 
-export const copyPublicFields = ({ id, title, request, parse, transform, render }) => {
+export const copyPublicFields = ({
+  id,
+  title,
+  request,
+  parse,
+  transform,
+  render
+}) => {
   return {
     id,
     title,
@@ -29,7 +37,7 @@ export const stopStep = (ex, stepName, onIterate) => {
   ex[stepName] = Date.now() - ex.stepStart
   delete ex.stepStart
   onIterate(copyPublicFields(ex))
-  if (stepName === 'render') {
+  if (stepName === "render") {
     ex.renderCount++
   }
 }
@@ -38,32 +46,34 @@ export const run = (onIterate, onComplete) => {
   const id = uuid()
   const experiment = {
     id,
-    title: "Test " + id.substr(0,7),
+    title: "Test " + id.substr(0, 7),
     request: 0,
     parse: 0,
     transform: 0
   }
-  
-  startStep(experiment, 'request', onIterate)
+
+  startStep(experiment, "request", onIterate)
   return fetch("http://localhost:3003/data", {
     headers: {
-      cache: "no-store"
+      cache: "no-store",
+      "Cache-control": "no-cache"
     }
   })
-    .then(tap(() => stopStep(experiment, 'request', onIterate)))
+    .then(tap(() => stopStep(experiment, "request", onIterate)))
     .then(res => {
-      startStep(experiment, 'parse', onIterate)
+      startStep(experiment, "parse", onIterate)
       return res.json()
     })
-    .then(tap(() => stopStep(experiment, 'parse', onIterate)))
+    .then(tap(() => stopStep(experiment, "parse", onIterate)))
     .then(data => {
-      startStep(experiment, 'transform', onIterate)
+      console.log(data[0])
+      startStep(experiment, "transform", onIterate)
       return runTransforms(data)
     })
-    .then(tap(() => stopStep(experiment, 'transform', onIterate)))
-    .then((data) => onComplete(experiment, data))
+    .then(tap(() => stopStep(experiment, "transform", onIterate)))
+    .then(data => onComplete(experiment, data))
     .catch(e => {
-      if(experiment.interval) clearInterval(experiment.interval)
+      if (experiment.interval) clearInterval(experiment.interval)
       console.error(e)
     })
 }

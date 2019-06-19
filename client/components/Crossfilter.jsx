@@ -77,7 +77,7 @@ const CrossfilterView = ({ data }) => {
   useEffect(() => {
     const start = Date.now()
     setCx(setupCrossfilter(data))
-    console.log("Setting up crossfilter", Date.now() - start)
+    console.log("📈 Setting up crossfilter", Date.now() - start)
   }, ["data"])
 
   if (!cx) return <Loading />

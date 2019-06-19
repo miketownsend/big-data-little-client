@@ -25,7 +25,7 @@ const VirtualizedCharacterTable = ({ characters }) => (
         headerClassName={"header"}
         rowClassName={"row"}
         headerHeight={52}
-        overscanRowCount={0}
+        overscanRowCount={5}
         noRowsRenderer={() => <div />}
         rowCount={characters.length}
         rowHeight={50}
