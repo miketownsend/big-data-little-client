@@ -1,11 +1,5 @@
 # Big data, little client
 
-## Todo:
-
-- tidy up prepared-earlier statements
-- prepare fetch statements for GZIP example
-- open data in tab so that we can see data structure
-
 # Common Frontend Performance Issues:
 
 ## 1. GZIP
@@ -18,6 +12,7 @@
 
 ## 2. Processing data in JS
 
+- use the devtool performance profiler to identify which parts of  your code are inefficient
 - use date-fns if parsing dates instead of moment
 - take care with FP and currying
 - spread operator is faster than object.assign
@@ -38,6 +33,7 @@
 - [react-virtualised](https://bvaughn.github.io/react-virtualized/#/components/Table) - render huge tables / views using virtualisation
 - [d3](https://d3js.org/) - make beautiful visualisations, also has a lot of data processing utilities
 - [rx.js](https://www.learnrxjs.io/) - js data streams - good for debouncing data out of websockets
+- [console.dog](https://www.npmjs.com/package/console.dog) - important console tool
 
 ## 5. Want free distributing processing?
 
